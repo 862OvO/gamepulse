@@ -1,0 +1,35 @@
+name: .NET CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore GamePulse.sln
+
+      - name: Verify formatting
+        run: dotnet format GamePulse.sln --verify-no-changes --no-restore
+
+      - name: Build
+        run: dotnet build GamePulse.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test GamePulse.sln --configuration Release --no-build --verbosity normal

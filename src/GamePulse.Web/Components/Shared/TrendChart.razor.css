@@ -1,0 +1,20 @@
+.trend-chart { min-height: 282px; }
+.chart-legend { display: flex; justify-content: flex-end; gap: 24px; margin: -38px 8px 8px; color: #667085; font-size: 13px; }
+.chart-legend span { display: inline-flex; align-items: center; gap: 8px; }
+.legend-line { width: 28px; height: 2px; background: #ff7417; }
+.legend-line.score { background: #0b9b86; }
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+.grid-line { stroke: #dfe4ea; stroke-dasharray: 5 5; stroke-width: 1; }
+.axis-line { stroke: #b9c2cc; stroke-width: 1; }
+.axis-label { fill: #667085; font-size: 12px; }
+.games-label { fill: #d95e0b; }
+.score-label { fill: #087c6d; }
+.data-line { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.games-line { stroke: #ff7417; }
+.score-line { stroke: #0b9b86; }
+.data-point { fill: #fff; stroke-width: 3; }
+.games-point { stroke: #ff7417; }
+.score-point { stroke: #0b9b86; }
+.date-axis { display: flex; justify-content: space-between; margin: -22px 46px 0 58px; color: #667085; font-size: 12px; }
+.chart-empty { display: grid; min-height: 250px; place-items: center; border: 1px dashed #cbd2da; color: #667085; font-size: 14px; }
+@media (max-width: 640px) { .trend-chart { min-height: 210px; } .chart-legend { margin-top: 0; justify-content: flex-start; } }

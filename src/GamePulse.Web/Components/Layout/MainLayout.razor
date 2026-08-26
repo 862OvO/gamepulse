@@ -1,0 +1,85 @@
+@inherits LayoutComponentBase
+
+<div class="app-shell @(sidebarCollapsed ? "sidebar-collapsed" : string.Empty) @(mobileMenuOpen ? "mobile-menu-open" : string.Empty)">
+    <aside class="sidebar" aria-label="主导航">
+        <div class="brand-row">
+            <a class="brand" href="#overview" aria-label="GamePulse 首页" @onclick="CloseMobileMenu">
+                <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+                    <circle cx="20" cy="20" r="14" />
+                    <circle cx="20" cy="20" r="6" />
+                    <path d="M20 2v7M20 31v7M2 20h7M31 20h7" />
+                </svg>
+                <span>GamePulse</span>
+            </a>
+            <button class="sidebar-close" type="button" aria-label="关闭导航" @onclick="CloseMobileMenu">
+                <AppIcon Name="close" />
+            </button>
+        </div>
+
+        <nav class="nav-list">
+            <a class="nav-link active" href="#overview" @onclick="CloseMobileMenu">
+                <AppIcon Name="overview" />
+                <span>总览</span>
+            </a>
+            <a class="nav-link" href="#retention" @onclick="CloseMobileMenu">
+                <AppIcon Name="retention" />
+                <span>留存分析</span>
+            </a>
+            <a class="nav-link" href="#funnel" @onclick="CloseMobileMenu">
+                <AppIcon Name="funnel" />
+                <span>行为漏斗</span>
+            </a>
+            <a class="nav-link" href="#import" @onclick="CloseMobileMenu">
+                <AppIcon Name="upload" />
+                <span>数据导入</span>
+            </a>
+        </nav>
+
+        <button class="collapse-button" type="button" @onclick="ToggleSidebar" aria-label="切换侧栏宽度">
+            <span aria-hidden="true">‹</span>
+            <span>收起</span>
+        </button>
+    </aside>
+
+    <button class="sidebar-backdrop" type="button" aria-label="关闭导航" @onclick="CloseMobileMenu"></button>
+
+    <div class="workspace">
+        <header class="topbar">
+            <button class="menu-button desktop-menu" type="button" @onclick="ToggleSidebar" aria-label="切换侧栏">
+                <AppIcon Name="menu" />
+            </button>
+            <a class="mobile-brand" href="#overview" aria-label="GamePulse 首页">
+                <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+                    <circle cx="20" cy="20" r="14" />
+                    <circle cx="20" cy="20" r="6" />
+                    <path d="M20 2v7M20 31v7M2 20h7M31 20h7" />
+                </svg>
+                <span>GamePulse</span>
+            </a>
+            <button class="menu-button mobile-menu" type="button" @onclick="ToggleMobileMenu" aria-label="打开导航" aria-expanded="@mobileMenuOpen">
+                <AppIcon Name="menu" />
+            </button>
+        </header>
+
+        <main class="main-content">
+            @Body
+        </main>
+    </div>
+</div>
+
+<div id="blazor-error-ui" data-nosnippet>
+    页面连接出现异常。
+    <a href="." class="reload">重新加载</a>
+    <span class="dismiss">×</span>
+</div>
+
+@code {
+    private bool sidebarCollapsed;
+    private bool mobileMenuOpen;
+
+    private void ToggleSidebar() => sidebarCollapsed = !sidebarCollapsed;
+
+    private void ToggleMobileMenu() => mobileMenuOpen = !mobileMenuOpen;
+
+    private void CloseMobileMenu() => mobileMenuOpen = false;
+}

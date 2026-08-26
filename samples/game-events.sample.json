@@ -1,0 +1,86 @@
+[
+  {
+    "id": "00000000-0000-0000-0000-000000000001",
+    "playerId": "player-a",
+    "sessionId": "session-a",
+    "gameId": "game-a",
+    "eventType": "GameStart",
+    "occurredAt": "2026-08-01T08:00:00Z",
+    "gameVersion": "1.0.0",
+    "deviceType": "simulator"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000002",
+    "playerId": "player-a",
+    "sessionId": "session-a",
+    "gameId": "game-a",
+    "eventType": "Move",
+    "occurredAt": "2026-08-01T08:00:10Z",
+    "gameVersion": "1.0.0",
+    "deviceType": "simulator",
+    "score": 32,
+    "stepCount": 1,
+    "direction": "left"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000003",
+    "playerId": "player-a",
+    "sessionId": "session-a",
+    "gameId": "game-a",
+    "eventType": "GameOver",
+    "occurredAt": "2026-08-01T08:02:00Z",
+    "gameVersion": "1.0.0",
+    "deviceType": "simulator",
+    "score": 512,
+    "stepCount": 48,
+    "durationSeconds": 120,
+    "fruitLevel": 8
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000004",
+    "playerId": "player-b",
+    "sessionId": "session-b",
+    "gameId": "game-b",
+    "eventType": "GameStart",
+    "occurredAt": "2026-08-01T09:00:00Z",
+    "gameVersion": "1.0.0",
+    "deviceType": "simulator"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000005",
+    "playerId": "player-b",
+    "sessionId": "session-b",
+    "gameId": "game-b",
+    "eventType": "Move",
+    "occurredAt": "2026-08-01T09:00:10Z",
+    "gameVersion": "1.0.0",
+    "deviceType": "simulator",
+    "score": 16,
+    "stepCount": 1,
+    "direction": "up"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000006",
+    "playerId": "player-b",
+    "sessionId": "session-b",
+    "gameId": "game-b",
+    "eventType": "GameOver",
+    "occurredAt": "2026-08-01T09:01:20Z",
+    "gameVersion": "1.0.0",
+    "deviceType": "simulator",
+    "score": 64,
+    "stepCount": 30,
+    "durationSeconds": 80,
+    "fruitLevel": 5
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000007",
+    "playerId": "player-a",
+    "sessionId": "session-c",
+    "gameId": "game-c",
+    "eventType": "SessionStart",
+    "occurredAt": "2026-08-02T08:00:00Z",
+    "gameVersion": "1.0.0",
+    "deviceType": "simulator"
+  }
+]

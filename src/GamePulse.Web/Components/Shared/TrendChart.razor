@@ -1,0 +1,84 @@
+@using System.Globalization
+
+<div class="trend-chart">
+    @if (Points.Count == 0)
+    {
+        <div class="chart-empty">导入样例数据后显示实际趋势</div>
+    }
+    else
+    {
+        <div class="chart-legend" aria-hidden="true">
+            <span><i class="legend-line games"></i>游戏局数</span>
+            <span><i class="legend-line score"></i>平均得分</span>
+        </div>
+        <svg viewBox="0 0 640 280" role="img" aria-labelledby="trend-title trend-description">
+            <title id="trend-title">按日期统计的游戏局数与平均得分趋势</title>
+            <desc id="trend-description">数据来自已导入的匿名游戏事件。</desc>
+            @foreach (var y in GridLines)
+            {
+                <line class="grid-line" x1="62" y1="@y" x2="588" y2="@y" />
+            }
+            <line class="axis-line" x1="62" y1="224" x2="588" y2="224" />
+            <text class="axis-label games-label" x="16" y="64">@MaxGames</text>
+            <text class="axis-label games-label" x="28" y="226">0</text>
+            <text class="axis-label score-label" x="600" y="64">@FormatNumber(MaxScore)</text>
+            <text class="axis-label score-label" x="600" y="226">0</text>
+            <polyline class="data-line games-line" points="@GamesPolyline" />
+            <polyline class="data-line score-line" points="@ScorePolyline" />
+            @for (var index = 0; index < Points.Count; index++)
+            {
+                var point = Points[index];
+                <circle class="data-point games-point" cx="@GetX(index)" cy="@GetGamesY(point.Games)" r="5" />
+                <circle class="data-point score-point" cx="@GetX(index)" cy="@GetScoreY(point.AverageScore)" r="5" />
+            }
+        </svg>
+        <div class="date-axis" aria-hidden="true">
+            @foreach (var point in Points)
+            {
+                <span>@point.Date.ToString("MM-dd", CultureInfo.InvariantCulture)</span>
+            }
+        </div>
+        <table class="visually-hidden">
+            <caption>核心趋势明细</caption>
+            <thead><tr><th>日期</th><th>游戏局数</th><th>平均得分</th></tr></thead>
+            <tbody>
+                @foreach (var point in Points)
+                {
+                    <tr><td>@point.Date</td><td>@point.Games</td><td>@FormatNumber(point.AverageScore)</td></tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@code {
+    private static readonly int[] GridLines = [62, 116, 170, 224];
+
+    [Parameter]
+    public IReadOnlyList<DailyTrendPointDto> Points { get; set; } = [];
+
+    private int MaxGames => Math.Max(1, Points.Select(point => point.Games).DefaultIfEmpty().Max());
+
+    private double MaxScore => Math.Max(1, Points.Select(point => point.AverageScore).DefaultIfEmpty().Max());
+
+    private string GamesPolyline => string.Join(
+        " ",
+        Points.Select((point, index) => FormatPoint(GetX(index), GetGamesY(point.Games))));
+
+    private string ScorePolyline => string.Join(
+        " ",
+        Points.Select((point, index) => FormatPoint(GetX(index), GetScoreY(point.AverageScore))));
+
+    private double GetX(int index) => Points.Count == 1
+        ? 325
+        : 70 + (index * (510d / (Points.Count - 1)));
+
+    private double GetGamesY(double games) => 224 - ((games / MaxGames) * 162);
+
+    private double GetScoreY(double score) => 224 - ((score / MaxScore) * 162);
+
+    private static string FormatPoint(double x, double y) =>
+        $"{x.ToString("F2", CultureInfo.InvariantCulture)},{y.ToString("F2", CultureInfo.InvariantCulture)}";
+
+    private static string FormatNumber(double value) => value.ToString("0.##", CultureInfo.InvariantCulture);
+}

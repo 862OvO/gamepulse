@@ -1,0 +1,20 @@
+<div class="retention-visual" role="img" aria-label="次日留存率 @PercentText">
+    <div class="retention-ring" style="@RingStyle">
+        <div class="retention-value">@PercentText</div>
+    </div>
+    <div class="retention-detail">
+        <span>可观察玩家 @Report.EligiblePlayers</span>
+        <span>次日返回 @Report.RetainedPlayers</span>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RetentionReportDto Report { get; set; } = new(0, 0, 0);
+
+    private double Percentage => Math.Clamp(Report.DayOneRetentionRate * 100, 0, 100);
+
+    private string PercentText => $"{Percentage:0.#}%";
+
+    private string RingStyle => $"--retention-angle: {Percentage * 3.6:0.##}deg";
+}

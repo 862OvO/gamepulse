@@ -1,0 +1,30 @@
+:root {
+    color-scheme: light;
+    font-family: Inter, "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    background: #f7f9fb;
+    color: #344054;
+}
+
+* { box-sizing: border-box; }
+html { min-width: 320px; scroll-behavior: smooth; background: #f7f9fb; }
+body { min-width: 320px; min-height: 100vh; margin: 0; background: #f7f9fb; color: #344054; }
+button, input, select, textarea { font: inherit; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid rgb(255 116 23 / 32%); outline-offset: 2px; }
+a { color: inherit; }
+h1:focus { outline: none; }
+.app-icon { display: block; width: 1.5em; height: 1.5em; }
+.file-input { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; opacity: 0 !important; }
+.visually-hidden { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
+
+#blazor-error-ui { position: fixed; right: 18px; bottom: 18px; z-index: 1000; display: none; max-width: 420px; padding: 14px 48px 14px 16px; border-left: 4px solid #d92d20; background: #fff; box-shadow: 0 12px 32px rgb(16 24 32 / 18%); color: #7a271a; font-size: 13px; }
+#blazor-error-ui .reload { margin-left: 8px; color: #b42318; font-weight: 700; }
+#blazor-error-ui .dismiss { position: absolute; top: 8px; right: 12px; cursor: pointer; font-size: 22px; }
+.blazor-error-boundary { padding: 1rem; border-left: 4px solid #d92d20; background: #fff2f0; color: #7a271a; }
+.blazor-error-boundary::after { content: "页面运行出现异常。"; }
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}

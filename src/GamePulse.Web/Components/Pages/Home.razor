@@ -1,0 +1,187 @@
+@page "/"
+@inject GamePulseApiClient ApiClient
+
+<PageTitle>运营数据总览 · GamePulse</PageTitle>
+
+<div id="overview" class="dashboard-page">
+    <header class="page-header">
+        <div>
+            <h1>运营数据总览</h1>
+        </div>
+        <button class="scope-control" type="button" aria-label="当前数据范围：全部样例数据">
+            <AppIcon Name="calendar" />
+            <span>全部样例数据</span>
+            <span class="scope-chevron" aria-hidden="true">⌄</span>
+        </button>
+    </header>
+
+    @if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <section class="connection-error" role="alert">
+            <div>
+                <strong>暂时无法读取分析 API</strong>
+                <span>@errorMessage</span>
+            </div>
+            <button type="button" @onclick="LoadDashboardAsync">重新连接</button>
+        </section>
+    }
+
+    <section class="metric-strip" aria-label="核心指标" aria-busy="@isLoading">
+        <article class="metric-item">
+            <span>匿名玩家</span>
+            <strong>@snapshot.Summary.PlayerCount</strong>
+        </article>
+        <article class="metric-item">
+            <span>游戏局数</span>
+            <strong>@snapshot.Summary.GameCount</strong>
+        </article>
+        <article class="metric-item">
+            <span>平均时长</span>
+            <strong>@FormatNumber(snapshot.Summary.AverageDurationSeconds)<small>秒</small></strong>
+        </article>
+        <article class="metric-item">
+            <span>平均得分</span>
+            <strong>@FormatNumber(snapshot.Summary.AverageScore)</strong>
+        </article>
+    </section>
+
+    <div class="analysis-grid">
+        <section class="analysis-panel trend-panel" aria-labelledby="trend-heading">
+            <div class="panel-heading">
+                <div>
+                    <h2 id="trend-heading">核心趋势</h2>
+                    <p>按事件实际发生日期汇总</p>
+                </div>
+            </div>
+            <TrendChart Points="snapshot.Trend" />
+        </section>
+
+        <section id="retention" class="analysis-panel retention-panel" aria-labelledby="retention-heading">
+            <div class="panel-heading">
+                <div>
+                    <h2 id="retention-heading">次日留存</h2>
+                    <p>仅纳入具有次日观察窗口的玩家</p>
+                </div>
+            </div>
+            <RetentionRing Report="snapshot.Retention" />
+        </section>
+    </div>
+
+    <div class="lower-grid">
+        <section id="funnel" class="analysis-panel funnel-panel" aria-labelledby="funnel-heading">
+            <div class="panel-heading">
+                <div>
+                    <h2 id="funnel-heading">行为漏斗</h2>
+                    <p>从开始游戏到达到目标分数与游戏结束</p>
+                </div>
+            </div>
+            <FunnelView Report="snapshot.Funnel" />
+        </section>
+
+        <section id="import" class="analysis-panel import-panel" aria-labelledby="import-heading">
+            <div class="panel-heading">
+                <div>
+                    <h2 id="import-heading">最近导入</h2>
+                    <p>@ImportSummaryText</p>
+                </div>
+            </div>
+            <div class="import-counts" aria-live="polite">
+                <div class="import-count success">
+                    <AppIcon Name="check" />
+                    <span><strong>@LastImported</strong> 条成功</span>
+                </div>
+                <div class="import-count rejected">
+                    <AppIcon Name="error" />
+                    <span><strong>@LastRejected</strong> 条拒绝</span>
+                </div>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(importMessage))
+            {
+                <p class="import-message @(LastRejected > 0 ? "has-errors" : string.Empty)" role="status">@importMessage</p>
+            }
+            <label class="import-action @(isImporting ? "is-busy" : string.Empty)">
+                <AppIcon Name="upload" />
+                <span>@(isImporting ? "正在导入" : "导入 JSON")</span>
+                <InputFile class="file-input" OnChange="HandleImport" accept=".json,application/json" disabled="@isImporting" />
+            </label>
+        </section>
+    </div>
+</div>
+
+@code {
+    private DashboardSnapshot snapshot = EmptySnapshot();
+    private ImportResultDto? latestImport;
+    private string? errorMessage;
+    private string? importMessage;
+    private bool isLoading = true;
+    private bool isImporting;
+
+    private int LastImported => latestImport?.Imported ?? snapshot.Summary.EventCount;
+
+    private int LastRejected => latestImport?.Rejected ?? 0;
+
+    private string ImportSummaryText => latestImport is null
+        ? "当前数据库中的匿名事件"
+        : $"本次接收 {latestImport.Received} 条事件";
+
+    protected override Task OnInitializedAsync() => LoadDashboardAsync();
+
+    private async Task LoadDashboardAsync()
+    {
+        isLoading = true;
+        errorMessage = null;
+
+        try
+        {
+            snapshot = await ApiClient.GetDashboardAsync();
+        }
+        catch (HttpRequestException)
+        {
+            errorMessage = "请确认 GamePulse.Api 已在 http://localhost:5080 启动。";
+        }
+        catch (TaskCanceledException)
+        {
+            errorMessage = "API 响应超时，请稍后重试。";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task HandleImport(InputFileChangeEventArgs eventArgs)
+    {
+        isImporting = true;
+        importMessage = null;
+
+        try
+        {
+            await using var stream = eventArgs.File.OpenReadStream(5 * 1024 * 1024);
+            latestImport = await ApiClient.ImportJsonAsync(stream);
+            importMessage = latestImport.Rejected == 0
+                ? "导入完成，页面指标已刷新。"
+                : latestImport.Errors.FirstOrDefault() ?? "部分记录未通过校验。";
+            await LoadDashboardAsync();
+        }
+        catch (IOException)
+        {
+            importMessage = "文件读取失败，单个 JSON 文件不能超过 5 MB。";
+        }
+        catch (HttpRequestException)
+        {
+            importMessage = "导入失败，请确认 API 已启动且文件内容为有效 JSON。";
+        }
+        finally
+        {
+            isImporting = false;
+        }
+    }
+
+    private static string FormatNumber(double value) => value.ToString("0.##");
+
+    private static DashboardSnapshot EmptySnapshot() => new(
+        new DashboardSummaryDto(0, 0, 0, 0, 0),
+        new RetentionReportDto(0, 0, 0),
+        new FunnelReportDto(512, 0, []),
+        []);
+}

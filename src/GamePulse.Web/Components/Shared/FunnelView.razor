@@ -1,0 +1,35 @@
+<div class="funnel" role="list" aria-label="行为漏斗">
+    @if (Report.Stages.Count == 0)
+    {
+        <div class="funnel-empty">导入样例数据后显示实际漏斗</div>
+    }
+    else
+    {
+        @for (var index = 0; index < Report.Stages.Count; index++)
+        {
+            var stage = Report.Stages[index];
+            <div class="funnel-stage stage-@index" role="listitem">
+                <span class="stage-index">@(index + 1)</span>
+                <span class="stage-label">@GetLabel(stage.Name)</span>
+                <strong>@stage.Sessions</strong>
+                <small>@FormatConversion(stage.ConversionRate)</small>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public FunnelReportDto Report { get; set; } = new(512, 0, []);
+
+    private string GetLabel(string stageName) => stageName switch
+    {
+        "game_start" => "开始游戏",
+        "move" => "发生移动",
+        "target_score" => $"达到 {Report.TargetScore} 分",
+        "game_over" => "游戏结束",
+        _ => stageName,
+    };
+
+    private static string FormatConversion(double conversionRate) => $"{conversionRate * 100:0.#}%";
+}

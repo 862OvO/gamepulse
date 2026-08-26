@@ -1,0 +1,7 @@
+.retention-visual { display: grid; min-height: 282px; place-items: center; align-content: center; gap: 24px; }
+.retention-ring { display: grid; width: 180px; aspect-ratio: 1; place-items: center; border-radius: 50%; background: conic-gradient(#ff7417 var(--retention-angle), #edf0f3 0); }
+.retention-ring::before { grid-area: 1 / 1; width: 128px; aspect-ratio: 1; border-radius: 50%; background: #fff; content: ""; }
+.retention-value { z-index: 1; grid-area: 1 / 1; color: #101820; font-size: 42px; font-weight: 680; letter-spacing: -.04em; }
+.retention-detail { display: flex; gap: 18px; color: #667085; font-size: 13px; }
+.retention-detail span + span { padding-left: 18px; border-left: 1px solid #dfe4ea; }
+@media (max-width: 640px) { .retention-visual { min-height: 230px; } .retention-ring { width: 150px; } .retention-ring::before { width: 108px; } }
